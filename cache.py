@@ -3,6 +3,7 @@ import argparse
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 import time
+import random
 
 load_dotenv()
 
@@ -104,8 +105,15 @@ I am looking for a new science fiction book to read. I prefer books that have a 
 """
 
 def main(deployment: str, iterations: int):
-    if deployment not in ["standard", "datazone", "global"]:
-        raise ValueError("Invalid deployment value. Must be one of: 'standard', 'datazone', or 'global'")
+    if deployment == "random":
+        deployment = random.choice(["standard", "datazone", "global"])
+    elif deployment not in ["standard", "datazone", "global"]:
+        raise ValueError("Invalid deployment value. Must be one of: 'standard', 'datazone', 'global', or 'random'")
+
+    if iterations == "random":
+        iterations = random.randint(1, 10)
+    elif not (1 <= iterations <= 10):
+        raise ValueError("Invalid iterations value. Must be an integer between 1 and 10, or 'random'")
 
     if deployment == "standard":
         endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_STANDARD")
@@ -181,7 +189,7 @@ def main(deployment: str, iterations: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process deployment and iterations")
-    parser.add_argument("deployment", type=str, choices=["standard", "datazone", "global"], help="Deployment type")
-    parser.add_argument("iterations", type=int, help="Number of iterations")
+    parser.add_argument("deployment", type=str, choices=["standard", "datazone", "global", "random"], help="Deployment type")
+    parser.add_argument("iterations", type=str, help="Number of iterations (1-10 or 'random')")
     args = parser.parse_args()
     main(args.deployment, args.iterations)
