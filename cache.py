@@ -192,4 +192,6 @@ if __name__ == "__main__":
     parser.add_argument("deployment", type=str, choices=["standard", "datazone", "global", "random"], help="Deployment type")
     parser.add_argument("iterations", type=str, help="Number of iterations (1-10 or 'random')")
     args = parser.parse_args()
+    if args.iterations != "random":
+        args.iterations = int(args.iterations)
     main(args.deployment, args.iterations)
